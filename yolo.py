@@ -20,21 +20,10 @@ from utils.utils import non_max_suppression, bbox_iou, DecodeBox,letterbox_image
 #--------------------------------------------#
 class YOLO(object):
     _defaults = {
-        # "model_path": 'model_data/yolo4_voc_weights.pth',# yolo4_voc_weights.pth   yolo4_new_weights.pth    'model_data/yolo4_weights.pth'
-        # "model_path": 'logs/Epoch46-Total_Loss13.1658-Val_Loss13.3461.pth',
-        # "model_path": 'model_data/yolo4_new_weights.pth',yolo4_new_weights_202101212151-epoch50-87-test-no-aug.pth
-
-        # "model_path": 'model_data/Epoch39-Total_Loss15.5482-Val_Loss17.0281.pth',
-        "model_path": 'model_data/Epoch50-Total_Loss12.7346-Val_Loss11.1628.pth',#Epoch39-Total_Loss15.5482-Val_Loss17.0281
-        # "model_path": 'model_data/Epoch49-Total_Loss12.7025-Val_Loss11.4650.pth',
-
+        "model_path": 'model_data/detect_weights.pth',
         "anchors_path": 'model_data/yolo_anchors.txt',
-        # "classes_path": 'model_data/coco_classes.txt',
         "classes_path": 'model_data/voc_classes.txt',
-        # "model_image_size" : (416, 416, 3),
-        # "model_image_size": (512, 1536, 3),#(256, 768, 3),# (768, 256, 3), # model_image_size.shape[0] = 768
-        "model_image_size": (256, 768, 3),# default best   size
-        # "model_image_size": (3200, 9600, 3),  # input_shape = (3200, 9600)
+        "model_image_size": (256, 768, 3),
         "confidence": 0.5,
         "cuda": True#False
     }
@@ -104,24 +93,7 @@ class YOLO(object):
 
 ###########################
         self.classnet = V_c_net("glo_classifier", pretraining=True, num_class=5)
-        #
-        # classnet_model_path = "model_data/vgg_Epoch37-Val_Loss41.9050_val_acc0.9013_test_acc0.9142_train_acc0.9433.pth"
-        # classnet_model_path = "model_data/dense_Epoch23-Val_Loss43.6228_val_acc0.8964_test_acc0.9109_train_acc0.9363.pth"vgg_Epoch37-Val_Loss41.9050_val_acc0.9013_test_acc0.9142_train_acc0.9433.pth
-        # classnet_model_path = "model_data/dense_Epoch36-Val_Loss160.4617_val_acc0.8864_test_acc0.8895_train_acc0.9918.pth"
-
-
-        # classnet_model_path = "model_data/dense_Epoch22-Val_Loss94.8488_val_acc0.9084_test_acc0.8978_train_acc0.9880.pth"
-
-
-        #zhege
-        classnet_model_path = "model_data/dense_Epoch18-Val_Loss163.4628_val_acc0.8806_test_acc0.8814_train_acc0.9919.pth"#dense_Epoch22-Val_Loss94.8488_val_acc0.9084_test_acc0.8978_train_acc0.9880
-
-
-
-
-        # classnet_model_path = "model_data/dense_Epoch28-Val_Loss282.9710_val_acc0.7647_test_acc0.7738_train_acc0.8937.pth"#low classify
-        # classnet_model_path = "model_data/dense_Epoch29-Val_Loss205.0367_val_acc0.8416_test_acc0.8593_train_acc0.9680.pth"  # low sr classify
-
+        classnet_model_path = "model_data/classify_weights.pth"
         model_dict2 = self.classnet.state_dict()
         pretrained_dict2 = torch.load(classnet_model_path, map_location=device)
         pretrained_dict2 = {k: v for k, v in pretrained_dict2.items() if
@@ -145,8 +117,6 @@ class YOLO(object):
 
         print('{} model, anchors, and classes loaded.'.format(self.model_path))
         # 画框设置不同的颜色
-        # hsv_tuples = [(x / len(self.class_names), 1., 1.)
-        #               for x in range(len(self.class_names))]
         hsv_tuples = [(x / 5, 1., 1.)
                       for x in range(5)]
         self.colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
